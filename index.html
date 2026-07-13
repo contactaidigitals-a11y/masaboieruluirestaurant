@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masa Boierului | Ospăț ca pe vremuri</title>
+  <meta name="description" content="Restaurant Masa Boierului Craiova - bucătărie românească, platouri boierești, grătar, ciorbe, terasă și rezervări online." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="#acasa"><img src="assets/62890.jpg" alt="Masa Boierului logo"><span>Masa Boierului</span></a>
+    <nav>
+      <a href="#meniu">Meniu</a>
+      <a href="#rezervari">Rezervări</a>
+      <a href="#galerie">Galerie</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="btn small" href="tel:+40753133321">Sună acum</a>
+  </header>
+
+  <main id="acasa">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <img class="logo" src="assets/62890.jpg" alt="Logo Masa Boierului">
+        <p class="eyebrow">Restaurant tradițional în Craiova</p>
+        <h1>Masa Boierului</h1>
+        <h2>Ospăț ca pe vremuri!</h2>
+        <p class="lead">Bucate românești gătite cu poftă, platouri pentru familie și prieteni, grătar, ciorbe, terasă și atmosferă boierească.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#meniu">Vezi meniul</a>
+          <a class="btn ghost" href="#rezervari">Rezervă o masă</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="intro section">
+      <div>
+        <p class="eyebrow">Gust autentic</p>
+        <h2>Ca la mesele de altădată</h2>
+        <p>La Masa Boierului găsești preparate românești consistente: ciorbe drese cum trebuie, mâncăruri gătite, grătar încins și platouri mari pentru mese cu prietenii.</p>
+      </div>
+      <div class="features">
+        <div><strong>Platouri mari</strong><span>Pentru 1, 2, 4 sau 6 persoane</span></div>
+        <div><strong>Bucătărie curată</strong><span>Spațiu modern, inox și flux organizat</span></div>
+        <div><strong>Terasă</strong><span>70 de locuri disponibile la capacitate maximă</span></div>
+      </div>
+    </section>
+
+    <section id="meniu" class="section menu-wrap">
+      <p class="eyebrow center">Meniu complet</p>
+      <h2 class="center">Preparate boierești</h2>
+      <p class="section-lead center">Meniul este introdus după PDF-ul oficial. Pentru verificare, poți deschide documentul original.</p>
+      <div class="menu-actions">
+        <a class="btn" href="assets/meniu-masa-boierului.pdf" target="_blank" rel="noopener">Deschide meniul PDF</a>
+      </div>
+      <div class="tabs" id="menuTabs"></div>
+      <div class="menu-grid" id="menuGrid"></div>
+    </section>
+
+    <section id="rezervari" class="section reservations">
+      <div class="reservation-shell">
+        <div class="reservation-tab-panel public-reservation-panel" data-reservation-panel="client">
+          <div class="reservation-copy">
+            <p class="eyebrow">Rezervări</p>
+            <h2>Rezervă o masă</h2>
+            <p>Completează formularul, iar echipa Masa Boierului te contactează telefonic pentru confirmare.</p>
+          </div>
+          <form class="reservation-form" id="reservationForm">
+            <label>Nume<input name="lastName" type="text" autocomplete="family-name" required></label>
+            <label>Prenume<input name="firstName" type="text" autocomplete="given-name" required></label>
+            <label>Număr persoane<input name="people" type="number" min="1" max="30" required></label>
+            <label>Număr telefon<input name="phone" type="tel" autocomplete="tel" required></label>
+            <button class="btn" type="submit">Trimite rezervarea</button>
+            <p class="form-note" id="reservationMessage"></p>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section split" id="bucatarie">
+      <div>
+        <p class="eyebrow">În spatele gustului</p>
+        <h2>Bucătărie modernă, curată și pregătită pentru volum</h2>
+        <p>Pozele cu bucătăria arată aparatură profesională, spații curate și organizare bună pentru servire rapidă.</p>
+        <ul><li>Echipamente profesionale</li><li>Flux curat de lucru</li><li>Preparare zilnică</li></ul>
+      </div>
+      <div class="kitchen-grid"><img src="assets/62943.jpg" alt="Bucătărie Masa Boierului"><img src="assets/62942.jpg" alt="Echipamente bucătărie"><img src="assets/62941.jpg" alt="Spațiu de lucru"><img src="assets/62938.jpg" alt="Preparare"></div>
+    </section>
+
+    <section id="galerie" class="section gallery-section">
+      <p class="eyebrow center">Atmosferă</p>
+      <h2 class="center">Mese, povești și voie bună</h2>
+      <div class="gallery">
+        <img class="wide" src="assets/62937.jpg" alt="Terasă Masa Boierului">
+        <img src="assets/62939.jpg" alt="Servire băuturi">
+        <img src="assets/62940.jpg" alt="Bere și vin">
+        <img src="assets/62935.jpg" alt="Preparat Masa Boierului">
+      </div>
+      <video class="video" src="assets/restaurant.mp4" controls muted playsinline poster="assets/62937.jpg"></video>
+    </section>
+
+    <section id="contact" class="section contact">
+      <div>
+        <p class="eyebrow">Contact</p>
+        <h2>Rezervă o masă</h2>
+        <p><strong>Restaurant Masa Boierului</strong><br>Craiova, România</p>
+        <p>Telefon evenimente și rezervări: <a href="tel:+40753133321">0753 133 321</a><br>Program: Luni - Duminică, 10:00 - 23:00</p>
+      </div>
+      <div class="contact-card">
+        <h3>Comenzi & rezervări</h3>
+        <p>Poți suna direct sau poți trimite formularul de rezervare online.</p>
+        <a class="btn" href="tel:+40753133321">Sună acum</a>
+        <a class="btn ghost" href="https://maps.google.com/?q=Masa%20Boierului%20Craiova" target="_blank" rel="noopener">Deschide harta</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2026 Masa Boierului • Ospăț ca pe vremuri!</footer>
+  <script src="script.js"></script>
+</body>
+</html>

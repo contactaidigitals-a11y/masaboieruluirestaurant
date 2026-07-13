@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin rezervări | Masa Boierului</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body class="admin-page">
+  <header class="nav">
+    <a class="brand" href="../#acasa"><img src="../assets/62890.jpg" alt="Masa Boierului logo"><span>Masa Boierului</span></a>
+    <nav>
+      <a href="../#meniu">Meniu</a>
+      <a href="../#rezervari">Rezervări</a>
+      <a href="../#galerie">Galerie</a>
+      <a href="../#contact">Contact</a>
+    </nav>
+    <a class="btn small" href="../#rezervari">Site</a>
+  </header>
+
+  <main class="admin-page-main">
+    <section class="section admin-standalone">
+      <div class="admin-page-heading">
+        <div>
+          <p class="eyebrow">/admin</p>
+          <h1>Panou rezervări</h1>
+          <p>Autentifică-te pentru a confirma, anula sau șterge rezervările primite de pe site.</p>
+        </div>
+        <button class="btn ghost hidden" id="logoutBtn" type="button">Logout</button>
+      </div>
+
+      <form class="admin-login" id="adminLogin">
+        <label>User admin<input name="username" type="text" autocomplete="username" required></label>
+        <label>Parolă<input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="btn" type="submit">Intră în admin</button>
+        <p class="form-note" id="adminMessage"></p>
+      </form>
+
+      <div class="admin-panel hidden" id="adminPanel">
+        <div class="admin-stats">
+          <div><span>Restaurant liber</span><strong id="adminRestaurantSeats">100</strong></div>
+          <div><span>Terasă liberă</span><strong id="adminTerraceSeats">70</strong></div>
+          <div><span>În așteptare</span><strong id="pendingCount">0</strong></div>
+        </div>
+
+        <div class="admin-section-title">
+          <div>
+            <p class="eyebrow">Rezervări</p>
+            <h2>Lista rezervărilor</h2>
+          </div>
+        </div>
+        <div class="reservations-list" id="reservationsList"></div>
+
+        <div class="admin-section-title clients-title">
+          <div>
+            <p class="eyebrow">Bază clienți</p>
+            <h2>Clienți după nume sau telefon</h2>
+          </div>
+          <label class="client-search">Caută client<input id="clientSearch" type="search" placeholder="Nume sau număr de telefon"></label>
+        </div>
+        <div class="clients-list" id="clientsList"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../admin.js"></script>
+</body>
+</html>
