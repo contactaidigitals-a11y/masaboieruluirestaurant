@@ -22,6 +22,56 @@
     <a class="btn small" href="tel:+40753133321">Sună acum</a>
   </header>
 
+  <button class="cart-fab" id="cartOpenBtn" type="button" aria-label="Deschide coșul">
+    <span>Coș</span>
+    <strong id="cartFabCount">0</strong>
+  </button>
+
+  <div class="cart-modal hidden" id="cartModal" aria-hidden="true">
+    <div class="cart-modal-backdrop" data-cart-close></div>
+    <aside class="cart-panel cart-dialog" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+      <div class="cart-dialog-head">
+        <div>
+          <p class="eyebrow">Coș</p>
+          <h3 id="cartTitle">Comanda ta</h3>
+        </div>
+        <button class="cart-close" type="button" id="cartCloseBtn" aria-label="Închide coșul">×</button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="delivery-box">
+        <span>Subtotal</span><strong id="cartSubtotal">0 Lei</strong>
+        <span>Taxă livrare</span><strong id="deliveryFee">15 Lei</strong>
+        <span>Total</span><strong id="cartTotal">0 Lei</strong>
+      </div>
+      <div class="cart-modal-actions">
+        <button class="btn ghost" type="button" id="continueOrderBtn">Continuă comanda</button>
+        <button class="btn" type="button" id="checkoutOpenBtn">Mergi la checkout</button>
+      </div>
+      <form class="checkout-form checkout-hidden" id="checkoutForm">
+        <label>Nume și prenume<input name="customerName" type="text" autocomplete="name" required></label>
+        <label>Telefon<input name="phone" type="tel" autocomplete="tel" required></label>
+        <label>Adresă livrare<input name="address" type="text" autocomplete="street-address" placeholder="Stradă, număr, bloc" required></label>
+        <label>Localitate
+          <select name="city" id="deliveryCity" required>
+            <option value="craiova">Craiova</option>
+            <option value="nearby">Localitate limitrofă</option>
+            <option value="outside">În afara zonei standard</option>
+          </select>
+        </label>
+        <label>Metodă plată
+          <select name="paymentMethod" id="paymentMethod" required>
+            <option value="cash">Cash la livrare</option>
+            <option value="card">Card online - Netopia</option>
+          </select>
+        </label>
+        <label>Observații<textarea name="notes" rows="3" placeholder="Etaj, interfon, fără ceapă etc."></textarea></label>
+        <p class="map-note">Calculul exact prin Google Maps poate fi activat cu API key. Momentan taxa se calculează pe zonă.</p>
+        <button class="btn" type="submit">Trimite comanda</button>
+        <p class="form-note" id="orderMessage"></p>
+      </form>
+    </aside>
+  </div>
+
   <main id="acasa">
     <section class="hero">
       <div class="hero-bg"></div>
@@ -62,40 +112,6 @@
       <div class="tabs" id="menuTabs"></div>
       <div class="menu-order-layout">
         <div class="menu-grid" id="menuGrid"></div>
-        <aside class="cart-panel">
-          <div>
-            <p class="eyebrow">Coș</p>
-            <h3>Comanda ta</h3>
-          </div>
-          <div class="cart-items" id="cartItems"></div>
-          <form class="checkout-form" id="checkoutForm">
-            <label>Nume și prenume<input name="customerName" type="text" autocomplete="name" required></label>
-            <label>Telefon<input name="phone" type="tel" autocomplete="tel" required></label>
-            <label>Adresă livrare<input name="address" type="text" autocomplete="street-address" placeholder="Stradă, număr, bloc" required></label>
-            <label>Localitate
-              <select name="city" id="deliveryCity" required>
-                <option value="craiova">Craiova</option>
-                <option value="nearby">Localitate limitrofă</option>
-                <option value="outside">În afara zonei standard</option>
-              </select>
-            </label>
-            <label>Metodă plată
-              <select name="paymentMethod" id="paymentMethod" required>
-                <option value="cash">Cash la livrare</option>
-                <option value="card">Card online - Netopia</option>
-              </select>
-            </label>
-            <label>Observații<textarea name="notes" rows="3" placeholder="Etaj, interfon, fără ceapă etc."></textarea></label>
-            <div class="delivery-box">
-              <span>Subtotal</span><strong id="cartSubtotal">0 Lei</strong>
-              <span>Taxă livrare</span><strong id="deliveryFee">15 Lei</strong>
-              <span>Total</span><strong id="cartTotal">15 Lei</strong>
-            </div>
-            <p class="map-note">Calculul exact prin Google Maps poate fi activat cu API key. Momentan taxa se calculează pe zonă.</p>
-            <button class="btn" type="submit">Trimite comanda</button>
-            <p class="form-note" id="orderMessage"></p>
-          </form>
-        </aside>
       </div>
     </section>
 

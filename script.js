@@ -106,8 +106,14 @@ const menu = [
 
 const menuTabs = document.querySelector("#menuTabs");
 const menuGrid = document.querySelector("#menuGrid");
+const cartOpenBtn = document.querySelector("#cartOpenBtn");
+const cartCloseBtn = document.querySelector("#cartCloseBtn");
+const cartModal = document.querySelector("#cartModal");
+const cartFabCount = document.querySelector("#cartFabCount");
 const cartItems = document.querySelector("#cartItems");
 const checkoutForm = document.querySelector("#checkoutForm");
+const checkoutOpenBtn = document.querySelector("#checkoutOpenBtn");
+const continueOrderBtn = document.querySelector("#continueOrderBtn");
 const deliveryCity = document.querySelector("#deliveryCity");
 const paymentMethod = document.querySelector("#paymentMethod");
 const orderMessage = document.querySelector("#orderMessage");
@@ -272,6 +278,8 @@ function addToCart(item) {
     });
   }
   renderCart();
+  cartOpenBtn?.classList.add("has-items");
+  window.setTimeout(() => cartOpenBtn?.classList.remove("has-items"), 450);
 }
 
 function cartSubtotal() {
@@ -284,8 +292,13 @@ function selectedDeliveryFee() {
 
 function renderCart() {
   if (!cartItems) return;
+  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  if (cartFabCount) cartFabCount.textContent = itemCount;
+  checkoutOpenBtn?.toggleAttribute("disabled", cart.length === 0);
+
   if (cart.length === 0) {
     cartItems.innerHTML = `<p class="empty-cart">Coșul este gol.</p>`;
+    checkoutForm?.classList.add("checkout-hidden");
   } else {
     cartItems.innerHTML = cart.map((item) => `
       <div class="cart-row" data-cart-key="${item.key}">
@@ -314,6 +327,23 @@ function renderCart() {
   setText("#cartSubtotal", money(subtotal));
   setText("#deliveryFee", money(deliveryFee));
   setText("#cartTotal", money(cart.length ? subtotal + deliveryFee : 0));
+}
+
+function openCart(showCheckout = false) {
+  if (!cartModal) return;
+  cartModal.classList.remove("hidden");
+  cartModal.classList.add("open");
+  cartModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  if (showCheckout && cart.length > 0) checkoutForm?.classList.remove("checkout-hidden");
+}
+
+function closeCart() {
+  if (!cartModal) return;
+  cartModal.classList.add("hidden");
+  cartModal.classList.remove("open");
+  cartModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
 }
 
 function updateCartQuantity(key, delta) {
@@ -510,6 +540,9 @@ function loginAdmin(event) {
 }
 
 function updateActiveNav() {
+  if (window.location.hash === "#comenzi") {
+    history.replaceState(null, "", "#meniu");
+  }
   const hash = window.location.hash || "#acasa";
   document.querySelectorAll(".nav nav a[href^='#']").forEach((link) => {
     link.classList.toggle("active", link.getAttribute("href") === hash);
@@ -528,6 +561,16 @@ if (reservationForm?.querySelector("[name='reservationDate']")) {
 window.addEventListener("hashchange", updateActiveNav);
 deliveryCity?.addEventListener("change", renderCart);
 paymentMethod?.addEventListener("change", renderCart);
+cartOpenBtn?.addEventListener("click", () => openCart(false));
+cartCloseBtn?.addEventListener("click", closeCart);
+continueOrderBtn?.addEventListener("click", closeCart);
+checkoutOpenBtn?.addEventListener("click", () => openCart(true));
+cartModal?.querySelectorAll("[data-cart-close]").forEach((element) => {
+  element.addEventListener("click", closeCart);
+});
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeCart();
+});
 checkoutForm?.addEventListener("submit", submitOrder);
 reservationForm?.addEventListener("submit", submitReservation);
 adminLogin?.addEventListener("submit", loginAdmin);
