@@ -52,6 +52,7 @@
           <div class="admin-tabs">
             <button class="active" type="button" data-admin-tab="orders">Comenzi <span id="ordersTabCount">0</span></button>
             <button type="button" data-admin-tab="reservations">Rezervări <span id="reservationsTabCount">0</span></button>
+            <button type="button" data-admin-tab="menu">Meniu <span id="menuTabCount">0</span></button>
           </div>
           <button class="btn ghost" id="enableNotificationsBtn" type="button">Activează notificări</button>
         </div>
@@ -77,6 +78,18 @@
           <div class="reservations-list" id="reservationsList"></div>
         </div>
 
+        <div class="admin-tab-panel" data-admin-tab-panel="menu">
+          <div class="admin-section-title">
+            <div>
+              <p class="eyebrow">Disponibilitate</p>
+              <h2>Meniu pentru azi</h2>
+            </div>
+            <label class="client-search">Caută produs<input id="menuSearch" type="search" placeholder="Omletă, ciorbă, desert"></label>
+          </div>
+          <p class="admin-note">Bifează dimineața produsele disponibile. Cele debifate rămân vizibile pe site, dar nu pot fi comandate.</p>
+          <div class="admin-menu-list" id="adminMenuList"></div>
+        </div>
+
         <div class="admin-section-title clients-title">
           <div>
             <p class="eyebrow">Bază clienți</p>
@@ -89,6 +102,7 @@
     </section>
   </main>
 
+  <script src="../menu-data.js"></script>
   <script src="../admin.js"></script>
 </body>
 </html>

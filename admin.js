@@ -7,6 +7,8 @@ const reservationsList = document.querySelector("#reservationsList");
 const ordersList = document.querySelector("#ordersList");
 const clientsList = document.querySelector("#clientsList");
 const clientSearch = document.querySelector("#clientSearch");
+const adminMenuList = document.querySelector("#adminMenuList");
+const menuSearch = document.querySelector("#menuSearch");
 const reservationDateFilter = document.querySelector("#reservationDateFilter");
 const logoutBtn = document.querySelector("#logoutBtn");
 const enableNotificationsBtn = document.querySelector("#enableNotificationsBtn");
@@ -14,7 +16,9 @@ const tabButtons = document.querySelectorAll("[data-admin-tab]");
 const tabPanels = document.querySelectorAll("[data-admin-tab-panel]");
 
 let editingReservationId = null;
-let adminState = { reservations: [], orders: [], clients: [], stats: {} };
+const adminMenu = window.MASA_BOIERULUI_MENU || [];
+
+let adminState = { reservations: [], orders: [], clients: [], menuAvailability: [], stats: {} };
 let activeAdminTab = "orders";
 let isFirstAdminLoad = true;
 let knownOrderIds = new Set();
@@ -56,6 +60,20 @@ function money(value) {
   return `${Number(value || 0)} Lei`;
 }
 
+function menuItemKey(item) {
+  const index = adminMenu.indexOf(item);
+  return item.id || `menu-${index}`;
+}
+
+function menuAvailabilityMap() {
+  return new Map((adminState.menuAvailability || []).map((item) => [item.key, item]));
+}
+
+function isMenuItemAvailable(item) {
+  const state = menuAvailabilityMap().get(menuItemKey(item));
+  return state?.available !== false;
+}
+
 function normalizePhone(phone) {
   return String(phone || "").replace(/\s+/g, "");
 }
@@ -87,8 +105,10 @@ function switchAdminTab(tab) {
 function updateAdminBadges() {
   const ordersCount = document.querySelector("#ordersTabCount");
   const reservationsCount = document.querySelector("#reservationsTabCount");
+  const menuCount = document.querySelector("#menuTabCount");
   if (ordersCount) ordersCount.textContent = adminState.stats.newOrders || 0;
   if (reservationsCount) reservationsCount.textContent = adminState.stats.pendingReservations || 0;
+  if (menuCount) menuCount.textContent = adminState.stats.unavailableItems || 0;
   const total = Number(adminState.stats.newOrders || 0) + Number(adminState.stats.pendingReservations || 0);
   document.title = total > 0 ? `(${total}) Admin | Masa Boierului` : "Admin | Masa Boierului";
 }
@@ -174,6 +194,7 @@ async function renderAdmin() {
     detectNewItems();
     renderReservations(adminState.reservations);
     renderOrders(adminState.orders);
+    renderMenuAvailability();
     renderClients();
   } catch (error) {
     if (error.message === "Autentificare necesară.") {
@@ -182,6 +203,75 @@ async function renderAdmin() {
       return;
     }
     reservationsList.innerHTML = `<div class="reservation-card"><p>${error.message}</p></div>`;
+  }
+}
+
+function renderMenuAvailability() {
+  if (!adminMenuList) return;
+  const query = String(menuSearch?.value || "").trim().toLowerCase();
+  const items = adminMenu.filter((item) => `${item.category} ${item.name}`.toLowerCase().includes(query));
+
+  if (items.length === 0) {
+    adminMenuList.innerHTML = `<div class="admin-menu-empty">Nu exista produse pentru aceasta cautare.</div>`;
+    return;
+  }
+
+  const groups = items.reduce((acc, item) => {
+    acc[item.category] = acc[item.category] || [];
+    acc[item.category].push(item);
+    return acc;
+  }, {});
+
+  adminMenuList.innerHTML = Object.entries(groups).map(([category, categoryItems]) => `
+    <section class="admin-menu-category">
+      <h3>${category}</h3>
+      <div class="admin-menu-items">
+        ${categoryItems.map((item) => {
+          const key = menuItemKey(item);
+          const available = isMenuItemAvailable(item);
+          return `
+            <label class="admin-menu-item ${available ? "" : "unavailable"}">
+              <input type="checkbox" data-menu-key="${key}" ${available ? "checked" : ""}>
+              <span>
+                <strong>${item.name}</strong>
+                <small>${item.size ? `${item.size} - ` : ""}${item.price}</small>
+              </span>
+              <em>${available ? "Disponibil" : "Indisponibil"}</em>
+            </label>
+          `;
+        }).join("")}
+      </div>
+    </section>
+  `).join("");
+
+  adminMenuList.querySelectorAll("[data-menu-key]").forEach((input) => {
+    input.addEventListener("change", () => toggleMenuItem(input));
+  });
+}
+
+async function toggleMenuItem(input) {
+  const item = adminMenu.find((entry) => menuItemKey(entry) === input.dataset.menuKey);
+  if (!item) return;
+  input.disabled = true;
+
+  try {
+    await apiRequest(`/api/menu-availability/${encodeURIComponent(input.dataset.menuKey)}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        available: input.checked,
+        name: item.name,
+        category: item.category,
+        price: item.price,
+      }),
+    });
+    await loadAdminState();
+    updateAdminBadges();
+    renderMenuAvailability();
+  } catch (error) {
+    input.checked = !input.checked;
+    alert(error.message);
+  } finally {
+    input.disabled = false;
   }
 }
 
@@ -465,6 +555,7 @@ logoutBtn.addEventListener("click", async () => {
   renderAdmin();
 });
 clientSearch?.addEventListener("input", renderClients);
+menuSearch?.addEventListener("input", renderMenuAvailability);
 reservationDateFilter?.addEventListener("change", () => {
   editingReservationId = null;
   isFirstAdminLoad = true;

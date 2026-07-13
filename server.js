@@ -18,6 +18,7 @@ const memory = {
   reservations: [],
   orders: [],
   clients: [],
+  menuAvailability: [],
 };
 
 if (hasDatabase) {
@@ -82,12 +83,25 @@ async function initDb() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS menu_availability (
+      item_key TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      category TEXT NOT NULL,
+      price TEXT,
+      available BOOLEAN NOT NULL DEFAULT TRUE,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     ALTER TABLE reservations ADD COLUMN IF NOT EXISTS reservation_date DATE NOT NULL DEFAULT CURRENT_DATE;
   `);
 }
 
 function normalizePhone(phone) {
   return String(phone || "").replace(/\s+/g, "");
+}
+
+function normalizeMenuKey(key) {
+  return String(key || "").trim().normalize("NFC");
 }
 
 function localDateString(date = new Date()) {
@@ -178,6 +192,17 @@ function rowClient(row) {
     totalOrders: Number(row.total_orders || 0),
     lastReservationAt: row.last_reservation_at,
     lastOrderAt: row.last_order_at,
+  };
+}
+
+function rowMenuAvailability(row) {
+  return {
+    key: normalizeMenuKey(row.item_key),
+    name: row.name,
+    category: row.category,
+    price: row.price || "",
+    available: row.available !== false,
+    updatedAt: row.updated_at,
   };
 }
 
@@ -275,6 +300,16 @@ async function getClients() {
   return (await query("SELECT * FROM clients ORDER BY COALESCE(last_order_at, last_reservation_at, updated_at) DESC")).map(rowClient);
 }
 
+async function getMenuAvailability() {
+  if (!pool) return memory.menuAvailability;
+  return (await query("SELECT * FROM menu_availability ORDER BY category, name")).map(rowMenuAvailability);
+}
+
+async function unavailableMenuKeys() {
+  const availability = await getMenuAvailability();
+  return new Set(availability.filter((item) => item.available === false).map((item) => normalizeMenuKey(item.key)));
+}
+
 function confirmedSeats(reservations, area, excludeId = null) {
   return reservations
     .filter((reservation) => reservation.status === "confirmed" && reservation.area === area && reservation.id !== excludeId)
@@ -312,6 +347,13 @@ app.get("/api/health", asyncHandler(async (_req, res) => {
   res.json({ ok: true, database: hasDatabase ? "postgresql" : "memory" });
 }));
 
+app.get("/api/menu/availability", asyncHandler(async (_req, res) => {
+  const availability = await getMenuAvailability();
+  res.json({
+    unavailableKeys: availability.filter((item) => item.available === false).map((item) => item.key),
+  });
+}));
+
 app.post("/api/admin/login", asyncHandler(async (req, res) => {
   if (String(req.body.username || "").trim() !== ADMIN_USERNAME || String(req.body.password || "") !== ADMIN_PASSWORD) {
     res.status(401).json({ error: "User sau parolă incorectă." });
@@ -336,11 +378,13 @@ app.get("/api/admin/state", requireAdmin, asyncHandler(async (req, res) => {
   const reservations = await getReservations(selectedDate);
   const orders = await getOrders();
   const clients = await getClients();
+  const menuAvailability = await getMenuAvailability();
   res.json({
     selectedDate,
     reservations,
     orders,
     clients,
+    menuAvailability,
     notifications: {
       reservations: allReservations.filter((item) => item.status === "pending"),
       orders: orders.filter((item) => item.status === "new"),
@@ -350,8 +394,47 @@ app.get("/api/admin/state", requireAdmin, asyncHandler(async (req, res) => {
       terraceSeats: availableSeats(reservations, "terrace"),
       pendingReservations: reservations.filter((item) => item.status === "pending").length,
       newOrders: orders.filter((item) => item.status === "new").length,
+      unavailableItems: menuAvailability.filter((item) => item.available === false).length,
     },
   });
+}));
+
+app.patch("/api/menu-availability/:key", requireAdmin, asyncHandler(async (req, res) => {
+  const key = normalizeMenuKey(req.params.key);
+  const available = req.body.available !== false;
+  const item = {
+    key,
+    name: String(req.body.name || "").trim(),
+    category: String(req.body.category || "").trim(),
+    price: String(req.body.price || "").trim(),
+    available,
+    updatedAt: new Date().toISOString(),
+  };
+
+  if (!item.key || !item.name || !item.category) {
+    res.status(400).json({ error: "Produsul nu este valid." });
+    return;
+  }
+
+  if (!pool) {
+    const existing = memory.menuAvailability.find((entry) => entry.key === item.key);
+    memory.menuAvailability = existing
+      ? memory.menuAvailability.map((entry) => entry.key === item.key ? item : entry)
+      : [item, ...memory.menuAvailability];
+  } else {
+    await query(`
+      INSERT INTO menu_availability (item_key, name, category, price, available, updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      ON CONFLICT (item_key) DO UPDATE SET
+        name = EXCLUDED.name,
+        category = EXCLUDED.category,
+        price = EXCLUDED.price,
+        available = EXCLUDED.available,
+        updated_at = EXCLUDED.updated_at
+    `, [item.key, item.name, item.category, item.price, item.available, item.updatedAt]);
+  }
+
+  res.json(item);
 }));
 
 app.post("/api/reservations", asyncHandler(async (req, res) => {
@@ -463,6 +546,13 @@ app.post("/api/orders", asyncHandler(async (req, res) => {
 
   if (!order.customerName || !order.phone || !order.address || items.length === 0) {
     res.status(400).json({ error: "Datele comenzii nu sunt valide." });
+    return;
+  }
+
+  const unavailable = await unavailableMenuKeys();
+  const blockedItem = items.find((item) => unavailable.has(normalizeMenuKey(item.key)));
+  if (blockedItem) {
+    res.status(409).json({ error: `${blockedItem.name || "Un produs"} este indisponibil astazi.` });
     return;
   }
 

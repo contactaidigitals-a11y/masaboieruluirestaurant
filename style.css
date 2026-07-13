@@ -62,11 +62,14 @@ button, input, select { font: inherit; }
 .menu-order-layout { min-width: 0; }
 .menu-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0; }
 .dish { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: start; min-height: 148px; }
+.dish.unavailable { opacity: .58; box-shadow: inset 0 0 0 999px rgba(0, 0, 0, .18), 0 16px 42px rgba(0, 0, 0, .2); }
 .dish h3 { margin: 0 0 8px; font-size: 1.05rem; }
 .dish p { font-size: .92rem; margin: 0; }
 .dish b { white-space: nowrap; color: var(--gold); font-size: 1.1rem; }
 .dish small { display: block; color: var(--muted); margin-bottom: 7px; font-weight: 800; }
 .dish-order { display: grid; gap: 12px; justify-items: end; }
+.dish .btn:disabled { cursor: not-allowed; opacity: .68; filter: grayscale(.6); }
+.unavailable-label { display: inline-flex; width: max-content; margin-top: 12px; padding: 6px 10px; border-radius: 999px; background: rgba(230, 128, 114, .18); color: #ffc9c0; font-size: .78rem; font-weight: 900; }
 
 .cart-fab { position: fixed; left: 24px; bottom: 24px; z-index: 35; display: inline-flex; align-items: center; gap: 10px; border: 1px solid rgba(216, 163, 72, .65); border-radius: 999px; padding: 12px 15px 12px 18px; background: linear-gradient(135deg, #f0bd5f, #9c6423); color: #120c05; font-weight: 950; box-shadow: 0 16px 42px rgba(0, 0, 0, .42), 0 12px 28px rgba(216, 163, 72, .24); cursor: pointer; }
 .cart-fab strong { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 26px; padding: 0 8px; border-radius: 999px; background: #120c05; color: var(--gold); font-size: .9rem; }
@@ -154,8 +157,21 @@ input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgb
 .admin-section-title h2 { margin: 6px 0 0; font-size: clamp(1.5rem, 3vw, 2.2rem); }
 .clients-title, .orders-title { border-top: 1px solid rgba(216, 163, 72, .18); padding-top: 28px; }
 .client-search { width: min(360px, 100%); }
+.admin-note { margin: -4px 0 16px; color: var(--muted); }
 .reservations-list { display: grid; gap: 14px; }
 .orders-list { display: grid; gap: 14px; }
+.admin-menu-list { display: grid; gap: 18px; }
+.admin-menu-category { border: 1px solid rgba(216, 163, 72, .18); border-radius: 8px; padding: 18px; background: rgba(255, 244, 220, .035); }
+.admin-menu-category h3 { margin: 0 0 12px; color: var(--gold); }
+.admin-menu-items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.admin-menu-item { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 12px; border: 1px solid rgba(216, 163, 72, .14); border-radius: 8px; background: rgba(0, 0, 0, .15); cursor: pointer; }
+.admin-menu-item.unavailable { border-color: rgba(230, 128, 114, .32); background: rgba(230, 128, 114, .08); }
+.admin-menu-item input { width: 20px; height: 20px; accent-color: var(--gold); }
+.admin-menu-item strong, .admin-menu-item small { display: block; }
+.admin-menu-item small, .admin-menu-item em { color: var(--muted); font-style: normal; }
+.admin-menu-item em { font-weight: 900; text-align: right; }
+.admin-menu-item.unavailable em { color: #ffc9c0; }
+.admin-menu-empty { padding: 18px; border: 1px solid rgba(216, 163, 72, .18); border-radius: 8px; color: var(--muted); }
 .reservation-card { display: grid; grid-template-columns: 1fr 220px; gap: 18px; }
 .order-admin-card { display: grid; grid-template-columns: 1fr 220px; gap: 18px; }
 .reservation-card.editing { grid-template-columns: 1fr 190px; border-color: rgba(142, 211, 159, .45); }
@@ -199,7 +215,7 @@ footer { text-align: center; color: var(--muted); padding: 28px; border-top: 1px
   .menu-shop-layout { grid-template-columns: 1fr; gap: 16px; }
   .tabs { position: sticky; top: 63px; z-index: 18; flex-direction: row; max-height: none; overflow-x: auto; padding: 10px 0; border-width: 1px 0; border-radius: 0; background: rgba(11, 16, 13, .95); backdrop-filter: blur(12px); }
   .tabs button { flex: 0 0 auto; text-align: center; white-space: nowrap; }
-  .menu-grid, .admin-stats { grid-template-columns: 1fr; }
+  .menu-grid, .admin-stats, .admin-menu-items { grid-template-columns: 1fr; }
   .admin-toolbar { align-items: stretch; flex-direction: column; }
   .admin-section-title { align-items: start; flex-direction: column; }
   .client-card span, .client-card small { text-align: left; }

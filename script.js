@@ -6,7 +6,7 @@ const ORDERS_KEY = "masaBoieruluiOrders";
 const SESSION_KEY = "masaBoieruluiAdmin";
 const DELIVERY_FEES = { craiova: 0, nearby: 0, outside: 0 };
 
-const menu = [
+const menu = window.MASA_BOIERULUI_MENU || [
   { category: "Mic dejun și gustări", name: "Omletă simplă", size: "120g", description: "2 ouă, lapte, unt, sare, piper și ulei de floarea-soarelui.", price: "20 Lei" },
   { category: "Mic dejun și gustări", name: "Omletă cu brânză maturată de oaie", size: "180g", description: "2 ouă, brânză de oaie, lapte, unt, ulei de floarea-soarelui, sare și piper.", price: "25 Lei" },
   { category: "Mic dejun și gustări", name: "Omletă țărănească", size: "330g", description: "Ouă, brânză de oaie, ardei gras, ciuperci, ceapă verde și creste de slănină.", price: "32 Lei" },
@@ -130,6 +130,8 @@ const reservationsList = document.querySelector("#reservationsList");
 const logoutBtn = document.querySelector("#logoutBtn");
 
 let cart = [];
+let activeMenuCategory = "Toate";
+let unavailableMenuKeys = new Set();
 
 function setText(selector, value) {
   const element = document.querySelector(selector);
@@ -171,6 +173,11 @@ function priceNumber(price) {
 
 function money(value) {
   return `${Number(value || 0)} Lei`;
+}
+
+function menuItemKey(item) {
+  const index = menu.indexOf(item);
+  return item.id || `menu-${index}`;
 }
 
 function todayRoDate() {
@@ -233,20 +240,26 @@ function renderSeats() {
 
 function renderMenu(category = "Toate") {
   if (!menuGrid) return;
+  activeMenuCategory = category;
   const items = category === "Toate" ? menu : menu.filter((item) => item.category === category);
-  menuGrid.innerHTML = items.map((item, index) => `
-    <article class="dish">
+  menuGrid.innerHTML = items.map((item, index) => {
+    const itemKey = menuItemKey(item);
+    const unavailable = unavailableMenuKeys.has(itemKey);
+    return `
+    <article class="dish ${unavailable ? "unavailable" : ""}">
       <div>
         <small>${item.category}${item.size ? ` • ${item.size}` : ""}</small>
         <h3>${item.name}</h3>
         <p>${item.description}</p>
+        ${unavailable ? `<span class="unavailable-label">Indisponibil astăzi</span>` : ""}
       </div>
       <div class="dish-order">
         <b>${item.price}</b>
-        <button class="btn small" type="button" data-add-menu="${index}">Adaugă</button>
+        <button class="btn small" type="button" data-add-menu="${index}" ${unavailable ? "disabled" : ""}>${unavailable ? "Indisponibil" : "Adaugă"}</button>
       </div>
     </article>
-  `).join("");
+  `;
+  }).join("");
 
   menuGrid.querySelectorAll("[data-add-menu]").forEach((button) => {
     button.addEventListener("click", () => addToCart(items[Number(button.dataset.addMenu)]));
@@ -267,7 +280,11 @@ function renderMenuTabs() {
 }
 
 function addToCart(item) {
-  const key = `${item.category}-${item.name}-${item.price}`;
+  const key = menuItemKey(item);
+  if (unavailableMenuKeys.has(key)) {
+    alert("Produsul este indisponibil astăzi.");
+    return;
+  }
   const existing = cart.find((cartItem) => cartItem.key === key);
   if (existing) {
     existing.quantity += 1;
@@ -284,6 +301,19 @@ function addToCart(item) {
   renderCart();
   cartOpenBtn?.classList.add("has-items");
   window.setTimeout(() => cartOpenBtn?.classList.remove("has-items"), 450);
+}
+
+async function loadMenuAvailability() {
+  if (!menuGrid) return;
+  try {
+    const data = await apiRequest("/api/menu/availability");
+    unavailableMenuKeys = new Set(data.unavailableKeys || []);
+    cart = cart.filter((item) => !unavailableMenuKeys.has(item.key));
+    renderMenu(activeMenuCategory);
+    renderCart();
+  } catch (_error) {
+    unavailableMenuKeys = new Set();
+  }
 }
 
 function cartSubtotal() {
@@ -380,6 +410,11 @@ async function submitOrder(event) {
   }
 
   const form = new FormData(checkoutForm);
+  const unavailableCartItem = cart.find((item) => unavailableMenuKeys.has(item.key));
+  if (unavailableCartItem) {
+    showMessage(orderMessage, `${unavailableCartItem.name} este indisponibil astăzi.`, "error");
+    return;
+  }
   const payment = String(form.get("paymentMethod"));
   const deliveryFee = selectedDeliveryFee();
   const subtotal = cartSubtotal();
@@ -573,6 +608,7 @@ function updateActiveNav() {
 
 renderMenuTabs();
 renderMenu();
+loadMenuAvailability();
 renderCart();
 renderSeats();
 renderAdmin();
@@ -581,6 +617,7 @@ if (reservationForm?.querySelector("[name='reservationDate']")) {
   reservationForm.querySelector("[name='reservationDate']").value = todayRoDate();
 }
 window.addEventListener("hashchange", updateActiveNav);
+if (menuGrid) window.setInterval(loadMenuAvailability, 30000);
 deliveryCity?.addEventListener("change", renderCart);
 paymentMethod?.addEventListener("change", renderCart);
 cartOpenBtn?.addEventListener("click", () => openCart(false));
