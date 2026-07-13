@@ -55,10 +55,11 @@ button, input, select { font: inherit; }
 .features span, .admin-stats span { color: var(--muted); }
 
 .menu-wrap { background: #0b100d; }
-.tabs { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 28px auto; max-width: 1120px; }
-.tabs button { border: 1px solid rgba(216, 163, 72, .35); background: transparent; color: var(--cream); padding: 10px 16px; border-radius: 999px; font-weight: 800; cursor: pointer; }
+.menu-shop-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 24px; max-width: 1320px; margin: 28px auto 0; align-items: start; }
+.tabs { position: sticky; top: 92px; display: flex; flex-direction: column; gap: 10px; max-height: calc(100vh - 112px); overflow: auto; padding: 12px; border: 1px solid rgba(216, 163, 72, .2); border-radius: 8px; background: rgba(255, 244, 220, .035); }
+.tabs button { border: 1px solid rgba(216, 163, 72, .35); background: transparent; color: var(--cream); padding: 11px 14px; border-radius: 999px; font-weight: 800; cursor: pointer; text-align: left; }
 .tabs button.active { background: var(--gold); color: #100b06; }
-.menu-order-layout { max-width: 1160px; margin: 0 auto; }
+.menu-order-layout { min-width: 0; }
 .menu-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0; }
 .dish { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: start; min-height: 148px; }
 .dish h3 { margin: 0 0 8px; font-size: 1.05rem; }
@@ -188,6 +189,9 @@ footer { text-align: center; color: var(--muted); padding: 28px; border-top: 1px
   .hero-content { padding-top: 110px; }
   .logo { width: 128px; height: 128px; }
   .intro, .split, .contact, .reservation-tab-panel, .reservation-card, .reservation-card.editing, .reservation-edit-form, .client-card, .order-admin-card { grid-template-columns: 1fr; }
+  .menu-shop-layout { grid-template-columns: 1fr; gap: 16px; }
+  .tabs { position: sticky; top: 63px; z-index: 18; flex-direction: row; max-height: none; overflow-x: auto; padding: 10px 0; border-width: 1px 0; border-radius: 0; background: rgba(11, 16, 13, .95); backdrop-filter: blur(12px); }
+  .tabs button { flex: 0 0 auto; text-align: center; white-space: nowrap; }
   .menu-grid, .admin-stats { grid-template-columns: 1fr; }
   .admin-toolbar { align-items: stretch; flex-direction: column; }
   .admin-section-title { align-items: start; flex-direction: column; }

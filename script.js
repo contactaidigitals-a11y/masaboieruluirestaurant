@@ -4,7 +4,7 @@ const STORAGE_KEY = "masaBoieruluiReservations";
 const CLIENTS_KEY = "masaBoieruluiClients";
 const ORDERS_KEY = "masaBoieruluiOrders";
 const SESSION_KEY = "masaBoieruluiAdmin";
-const DELIVERY_FEES = { craiova: 15, nearby: 25, outside: 40 };
+const DELIVERY_FEES = { craiova: 0, nearby: 0, outside: 0 };
 
 const menu = [
   { category: "Mic dejun și gustări", name: "Omletă simplă", size: "120g", description: "2 ouă, lapte, unt, sare, piper și ulei de floarea-soarelui.", price: "20 Lei" },

@@ -40,7 +40,7 @@
       <div class="cart-items" id="cartItems"></div>
       <div class="delivery-box">
         <span>Subtotal</span><strong id="cartSubtotal">0 Lei</strong>
-        <span>Taxă livrare</span><strong id="deliveryFee">15 Lei</strong>
+        <span>Taxă livrare</span><strong id="deliveryFee">0 Lei</strong>
         <span>Total</span><strong id="cartTotal">0 Lei</strong>
       </div>
       <div class="cart-modal-actions">
@@ -65,7 +65,7 @@
           </select>
         </label>
         <label>Observații<textarea name="notes" rows="3" placeholder="Etaj, interfon, fără ceapă etc."></textarea></label>
-        <p class="map-note">Calculul exact prin Google Maps poate fi activat cu API key. Momentan taxa se calculează pe zonă.</p>
+        <p class="map-note">Taxa de livrare este momentan 0 Lei.</p>
         <button class="btn" type="submit">Trimite comanda</button>
         <p class="form-note" id="orderMessage"></p>
       </form>
@@ -109,9 +109,11 @@
       <div class="menu-actions">
         <a class="btn" href="assets/meniu-masa-boierului.pdf" target="_blank" rel="noopener">Deschide meniul PDF</a>
       </div>
-      <div class="tabs" id="menuTabs"></div>
-      <div class="menu-order-layout">
-        <div class="menu-grid" id="menuGrid"></div>
+      <div class="menu-shop-layout">
+        <div class="tabs" id="menuTabs"></div>
+        <div class="menu-order-layout">
+          <div class="menu-grid" id="menuGrid"></div>
+        </div>
       </div>
     </section>
 
