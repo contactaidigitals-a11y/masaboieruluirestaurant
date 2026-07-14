@@ -127,6 +127,8 @@ button, input, select { font: inherit; }
 .cart-controls button { height: 30px; border: 1px solid rgba(216, 163, 72, .35); border-radius: 50%; background: transparent; color: var(--cream); font-weight: 900; cursor: pointer; }
 .checkout-form { display: grid; gap: 13px; }
 .checkout-form.checkout-hidden { display: none; }
+.checkout-address-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.checkout-address-grid label:first-child { grid-column: 1 / -1; }
 .checkout-payment-note { display: grid; gap: 4px; padding: 13px 14px; border: 1px solid rgba(216, 163, 72, .24); border-radius: 8px; background: rgba(216, 163, 72, .08); }
 .checkout-payment-note span { color: var(--muted); font-size: .88rem; font-weight: 800; }
 .checkout-payment-note strong { color: var(--cream); }
@@ -318,6 +320,8 @@ footer { text-align: center; color: var(--muted); padding: 28px; border-top: 1px
   .cart-panel { gap: 12px; }
   .cart-row { grid-template-columns: 1fr; }
   .cart-controls { justify-self: start; }
+  .checkout-address-grid { grid-template-columns: 1fr; }
+  .checkout-address-grid label:first-child { grid-column: auto; }
   .checkout-form label, .checkout-payment-note { gap: 7px; }
   .pending-overview-head { align-items: start; flex-direction: column; }
   .pending-overview-days button { min-width: 100%; }

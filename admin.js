@@ -549,12 +549,25 @@ function orderDateIso(order) {
 }
 
 function orderMapQuery(order, cityLabel) {
-  return [order.address, cityLabel, "Romania"].filter(Boolean).join(", ");
+  const preciseAddress = [
+    order.street,
+    order.streetNumber ? `nr. ${order.streetNumber}` : "",
+    order.block ? `bloc ${order.block}` : "",
+  ].filter(Boolean).join(", ");
+  return [preciseAddress || order.address, cityLabel, "Romania"].filter(Boolean).join(", ");
+}
+
+function orderCityLabel(value) {
+  const city = String(value || "").trim();
+  if (!city || city.toLowerCase() === "craiova") return "Craiova";
+  if (city === "nearby") return "Localitate limitrofă";
+  if (city === "outside") return "În afara zonei standard";
+  return city;
 }
 
 function renderOrderCard(order) {
   const date = new Date(order.createdAt).toLocaleString("ro-RO");
-  const cityLabel = order.city === "nearby" ? "Localitate limitrofă" : order.city === "outside" ? "În afara zonei standard" : "Craiova";
+  const cityLabel = orderCityLabel(order.city);
   const items = (order.items || []).map((item) => `<li>${item.quantity} x ${item.name} <span>${item.priceLabel}</span></li>`).join("");
   const mapQuery = orderMapQuery(order, cityLabel);
   const encodedMapQuery = encodeURIComponent(mapQuery);

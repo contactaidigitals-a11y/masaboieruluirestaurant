@@ -242,9 +242,20 @@ function money(value) {
 }
 
 function cityLabel(value) {
-  if (value === "nearby") return "Localitate limitrofă";
-  if (value === "outside") return "În afara zonei standard";
-  return "Craiova";
+  const city = String(value || "").trim();
+  if (!city || city.toLowerCase() === "craiova") return "Craiova";
+  if (city === "nearby") return "Localitate limitrofă";
+  if (city === "outside") return "În afara zonei standard";
+  return city;
+}
+
+function buildDeliveryAddress({ street, streetNumber, block, apartment }) {
+  return [
+    street,
+    streetNumber ? `nr. ${streetNumber}` : "",
+    block ? `bloc ${block}` : "",
+    apartment ? `ap. ${apartment}` : "",
+  ].filter(Boolean).join(", ");
 }
 
 function paymentMethodLabel(value) {
@@ -440,7 +451,7 @@ function cartSubtotal() {
 }
 
 function selectedDeliveryFee() {
-  return DELIVERY_FEES[deliveryCity?.value || "craiova"] || DELIVERY_FEES.craiova;
+  return DELIVERY_FEES.craiova;
 }
 
 function renderCart() {
@@ -544,11 +555,18 @@ async function submitOrder(event) {
   const deliveryFee = selectedDeliveryFee();
   const subtotal = cartSubtotal();
   const orderItems = cart.map((item) => ({ ...item }));
+  const addressParts = {
+    street: String(form.get("street") || "").trim(),
+    streetNumber: String(form.get("streetNumber") || "").trim(),
+    block: String(form.get("block") || "").trim(),
+    apartment: String(form.get("apartment") || "").trim(),
+  };
   const order = {
     customerName: String(form.get("customerName")).trim(),
     phone: normalizePhone(form.get("phone")),
-    address: String(form.get("address")).trim(),
-    city: String(form.get("city")),
+    ...addressParts,
+    address: buildDeliveryAddress(addressParts),
+    city: String(form.get("city") || "Craiova").trim() || "Craiova",
     notes: String(form.get("notes") || "").trim(),
     paymentMethod: payment,
     items: orderItems,

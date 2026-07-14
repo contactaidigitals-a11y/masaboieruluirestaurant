@@ -56,6 +56,10 @@ async function initDb() {
       customer_name TEXT NOT NULL,
       phone TEXT NOT NULL,
       address TEXT NOT NULL,
+      street TEXT,
+      street_number TEXT,
+      block TEXT,
+      apartment TEXT,
       city TEXT NOT NULL,
       notes TEXT,
       payment_method TEXT NOT NULL,
@@ -94,6 +98,10 @@ async function initDb() {
     );
 
     ALTER TABLE reservations ADD COLUMN IF NOT EXISTS reservation_date DATE NOT NULL DEFAULT CURRENT_DATE;
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS street TEXT;
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS street_number TEXT;
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS block TEXT;
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS apartment TEXT;
   `);
 }
 
@@ -166,6 +174,10 @@ function rowOrder(row) {
     customerName: row.customer_name,
     phone: row.phone,
     address: row.address,
+    street: row.street || "",
+    streetNumber: row.street_number || "",
+    block: row.block || "",
+    apartment: row.apartment || "",
     city: row.city,
     notes: row.notes || "",
     paymentMethod: row.payment_method,
@@ -194,6 +206,15 @@ function rowClient(row) {
     lastReservationAt: row.last_reservation_at,
     lastOrderAt: row.last_order_at,
   };
+}
+
+function buildDeliveryAddress({ street, streetNumber, block, apartment }) {
+  return [
+    street,
+    streetNumber ? `nr. ${streetNumber}` : "",
+    block ? `bloc ${block}` : "",
+    apartment ? `ap. ${apartment}` : "",
+  ].filter(Boolean).join(", ");
 }
 
 function rowMenuAvailability(row) {
@@ -539,12 +560,20 @@ app.post("/api/orders", asyncHandler(async (req, res) => {
     res.status(400).json({ error: "Momentan acceptăm doar plata cash." });
     return;
   }
+  const addressParts = {
+    street: String(req.body.street || "").trim(),
+    streetNumber: String(req.body.streetNumber || "").trim(),
+    block: String(req.body.block || "").trim(),
+    apartment: String(req.body.apartment || "").trim(),
+  };
+  const composedAddress = buildDeliveryAddress(addressParts);
   const order = {
     id: crypto.randomUUID(),
     customerName: String(req.body.customerName || "").trim(),
     phone: normalizePhone(req.body.phone),
-    address: String(req.body.address || "").trim(),
-    city: String(req.body.city || "craiova"),
+    ...addressParts,
+    address: composedAddress || String(req.body.address || "").trim(),
+    city: String(req.body.city || "Craiova").trim() || "Craiova",
     notes: String(req.body.notes || "").trim(),
     paymentMethod: "cash",
     paymentStatus: "cash_on_delivery",
@@ -572,9 +601,9 @@ app.post("/api/orders", asyncHandler(async (req, res) => {
     memory.orders.unshift(order);
   } else {
     await query(`
-      INSERT INTO orders (id, customer_name, phone, address, city, notes, payment_method, payment_status, status, items, subtotal, delivery_fee, total, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10::jsonb, $11, $12, $13, $14)
-    `, [order.id, order.customerName, order.phone, order.address, order.city, order.notes, order.paymentMethod, order.paymentStatus, order.status, JSON.stringify(order.items), order.subtotal, order.deliveryFee, order.total, order.createdAt]);
+      INSERT INTO orders (id, customer_name, phone, address, street, street_number, block, apartment, city, notes, payment_method, payment_status, status, items, subtotal, delivery_fee, total, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14::jsonb, $15, $16, $17, $18)
+    `, [order.id, order.customerName, order.phone, order.address, order.street, order.streetNumber, order.block, order.apartment, order.city, order.notes, order.paymentMethod, order.paymentStatus, order.status, JSON.stringify(order.items), order.subtotal, order.deliveryFee, order.total, order.createdAt]);
   }
   await upsertClientFromOrder(order);
   res.status(201).json(order);

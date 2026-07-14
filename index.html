@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20260714-nav-about-contact" />
+  <link rel="stylesheet" href="style.css?v=20260714-address-fields" />
 </head>
 <body>
   <header class="nav">
@@ -50,14 +50,13 @@
       <form class="checkout-form checkout-hidden" id="checkoutForm">
         <label>Nume și prenume<input name="customerName" type="text" autocomplete="name" required></label>
         <label>Telefon<input name="phone" type="tel" autocomplete="tel" required></label>
-        <label>Adresă livrare<input name="address" type="text" autocomplete="street-address" placeholder="Stradă, număr, bloc" required></label>
-        <label>Localitate
-          <select name="city" id="deliveryCity" required>
-            <option value="craiova">Craiova</option>
-            <option value="nearby">Localitate limitrofă</option>
-            <option value="outside">În afara zonei standard</option>
-          </select>
-        </label>
+        <div class="checkout-address-grid">
+          <label>Stradă<input name="street" type="text" autocomplete="address-line1" placeholder="Ex: Henri Coandă" required></label>
+          <label>Număr<input name="streetNumber" type="text" autocomplete="address-line2" placeholder="Ex: 50" required></label>
+          <label>Bloc<input name="block" type="text" placeholder="Ex: M16"></label>
+          <label>Apartament<input name="apartment" type="text" placeholder="Ex: 12"></label>
+        </div>
+        <label>Localitate<input name="city" id="deliveryCity" type="text" autocomplete="address-level2" value="Craiova" required></label>
         <input name="paymentMethod" id="paymentMethod" type="hidden" value="cash">
         <div class="checkout-payment-note">
           <span>Metodă plată</span>
@@ -229,6 +228,6 @@
 
   <footer>© 2026 Masa Boierului • Ospăț ca pe vremuri!</footer>
   <script src="menu-data.js?v=20260714"></script>
-  <script src="script.js?v=20260714-about-carousel"></script>
+  <script src="script.js?v=20260714-address-fields"></script>
 </body>
 </html>
