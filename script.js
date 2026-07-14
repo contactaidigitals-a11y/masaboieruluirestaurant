@@ -129,6 +129,9 @@ const dailyMenuDay = document.querySelector("#dailyMenuDay");
 const dailyMenuCaption = document.querySelector("#dailyMenuCaption");
 const dailyMenuActions = document.querySelector("#dailyMenuActions");
 const dailyMenuClosed = document.querySelector("#dailyMenuClosed");
+const aboutCarouselImage = document.querySelector("#aboutCarouselImage");
+const aboutCarouselPrev = document.querySelector("#aboutCarouselPrev");
+const aboutCarouselNext = document.querySelector("#aboutCarouselNext");
 const adminLogin = document.querySelector("#adminLogin");
 const adminPanel = document.querySelector("#adminPanel");
 const adminMessage = document.querySelector("#adminMessage");
@@ -151,7 +154,17 @@ const DAILY_MENU_OPTIONS = {
   complete: { label: "Meniu complet", price: "33 Lei" },
 };
 
+const ABOUT_GALLERY = [
+  { src: "assets/62937.jpg", alt: "Terasă Masa Boierului" },
+  { src: "assets/62939.jpg", alt: "Servire băuturi Masa Boierului" },
+  { src: "assets/62940.jpg", alt: "Bere și vin la Masa Boierului" },
+  { src: "assets/62935.jpg", alt: "Preparat Masa Boierului" },
+  { src: "assets/62943.jpg", alt: "Bucătărie Masa Boierului" },
+  { src: "assets/62942.jpg", alt: "Echipamente bucătărie Masa Boierului" },
+];
+
 let activeDailyMenu = null;
+let aboutGalleryIndex = 0;
 
 function renderDailyMenu() {
   if (!dailyMenuImage) return;
@@ -177,6 +190,18 @@ function renderDailyMenu() {
 function setText(selector, value) {
   const element = document.querySelector(selector);
   if (element) element.textContent = value;
+}
+
+function renderAboutCarousel() {
+  if (!aboutCarouselImage) return;
+  const item = ABOUT_GALLERY[aboutGalleryIndex];
+  aboutCarouselImage.src = item.src;
+  aboutCarouselImage.alt = item.alt;
+}
+
+function moveAboutCarousel(direction) {
+  aboutGalleryIndex = (aboutGalleryIndex + direction + ABOUT_GALLERY.length) % ABOUT_GALLERY.length;
+  renderAboutCarousel();
 }
 
 function readReservations() {
@@ -707,6 +732,7 @@ function updateActiveNav() {
 }
 
 renderDailyMenu();
+renderAboutCarousel();
 renderMenuTabs();
 renderMenu();
 loadMenuAvailability();
@@ -743,6 +769,8 @@ checkoutForm?.addEventListener("submit", submitOrder);
 dailyMenuActions?.querySelectorAll("[data-daily-menu]").forEach((button) => {
   button.addEventListener("click", () => addDailyMenuToCart(button.dataset.dailyMenu));
 });
+aboutCarouselPrev?.addEventListener("click", () => moveAboutCarousel(-1));
+aboutCarouselNext?.addEventListener("click", () => moveAboutCarousel(1));
 reservationForm?.addEventListener("submit", submitReservation);
 adminLogin?.addEventListener("submit", loginAdmin);
 logoutBtn?.addEventListener("click", () => {
