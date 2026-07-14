@@ -37,9 +37,11 @@ button, input, select { font: inherit; }
 .daily-menu-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 620px; margin-top: 28px; }
 .daily-menu-actions .btn { display: grid; gap: 4px; min-height: 82px; border-radius: 8px; padding: 14px 12px; text-align: center; }
 .daily-menu-actions .btn span { color: #1a1006; font-size: 1.08rem; }
-.daily-menu-closed { display: grid; gap: 6px; max-width: 560px; margin-top: 28px; padding: 18px; border: 1px solid rgba(216, 163, 72, .34); border-radius: 8px; background: rgba(216, 163, 72, .1); }
+.daily-menu-closed { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; max-width: 660px; margin-top: 28px; padding: 18px; border: 1px solid rgba(216, 163, 72, .34); border-radius: 8px; background: rgba(216, 163, 72, .1); }
+.daily-menu-closed strong, .daily-menu-closed span { display: block; }
 .daily-menu-closed strong { color: var(--gold); }
 .daily-menu-closed span { color: var(--muted); font-weight: 800; }
+.daily-menu-whatsapp { white-space: nowrap; }
 .daily-menu-media { position: relative; margin: 0; padding: 18px; }
 .daily-menu-media::before { content: ""; position: absolute; inset: -20px; z-index: 0; border-radius: 28px; background: var(--daily-menu-image, none) center/cover no-repeat; filter: blur(22px); opacity: .32; transform: scale(1.04); }
 .daily-menu-media::after { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: 22px; pointer-events: none; box-shadow: inset 0 0 70px rgba(11, 16, 13, .62), 0 24px 90px rgba(0, 0, 0, .42); }
@@ -258,6 +260,8 @@ footer { text-align: center; color: var(--muted); padding: 28px; border-top: 1px
   .daily-menu-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 16px; }
   .daily-menu-actions .btn { min-height: 62px; padding: 10px 6px; font-size: .86rem; line-height: 1.2; }
   .daily-menu-actions .btn span { font-size: .94rem; }
+  .daily-menu-closed { grid-template-columns: 1fr; gap: 12px; margin-top: 16px; }
+  .daily-menu-whatsapp { width: 100%; }
   .daily-menu-media { padding: 6px; max-width: 100%; }
   .daily-menu-media::before { inset: -8px; filter: blur(14px); opacity: .24; }
   .daily-menu-media::after { border-radius: 16px; box-shadow: inset 0 0 36px rgba(11, 16, 13, .5), 0 18px 54px rgba(0, 0, 0, .34); }

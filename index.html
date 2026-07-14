@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20260714-mobile-daily-menu-fix" />
+  <link rel="stylesheet" href="style.css?v=20260714-weekend-whatsapp-banner" />
 </head>
 <body>
   <header class="nav">
@@ -90,15 +90,18 @@
       <div class="daily-menu-copy">
         <p class="eyebrow" id="dailyMenuDay">Meniul zilei</p>
         <h2>Meniul zilei</h2>
-        <p>Disponibil de luni până vineri, în intervalul 11:00-16:00. Poza se schimbă automat în funcție de ziua săptămânii.</p>
+        <p>Disponibil de Luni până Vineri, în intervalul 11:00-16:00. Poza se schimbă automat în funcție de ziua săptămânii.</p>
         <div class="daily-menu-actions" id="dailyMenuActions">
           <button class="btn" type="button" data-daily-menu="first">Felul 1 <span>18 Lei</span></button>
           <button class="btn" type="button" data-daily-menu="second">Felul 2 <span>22 Lei</span></button>
           <button class="btn" type="button" data-daily-menu="complete">Meniu complet <span>33 Lei</span></button>
         </div>
         <div class="daily-menu-closed hidden" id="dailyMenuClosed">
-          <strong>Meniul zilei este disponibil doar de luni până vineri.</strong>
-          <span>În weekend poți comanda preparatele din meniul complet.</span>
+          <div>
+            <strong>Meniul zilei este disponibil doar de Luni până Vineri.</strong>
+            <span>În weekend poți comanda preparatele din meniul complet.</span>
+          </div>
+          <a class="btn small daily-menu-whatsapp" href="https://wa.me/40753133321?text=Bun%C4%83%20ziua%2C%20a%C8%99%20dori%20s%C4%83%20comand%20din%20meniul%20complet." target="_blank" rel="noopener">WhatsApp</a>
         </div>
       </div>
       <figure class="daily-menu-media">
@@ -213,6 +216,6 @@
 
   <footer>© 2026 Masa Boierului • Ospăț ca pe vremuri!</footer>
   <script src="menu-data.js?v=20260714"></script>
-  <script src="script.js?v=20260714-daily-menu-order"></script>
+  <script src="script.js?v=20260714-weekend-whatsapp-banner"></script>
 </body>
 </html>

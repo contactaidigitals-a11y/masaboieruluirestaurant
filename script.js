@@ -171,7 +171,7 @@ function renderDailyMenu() {
     : "Weekend";
   if (dailyMenuCaption) dailyMenuCaption.textContent = isWeekday
     ? (menuForToday ? `Meniul zilei pentru ${selectedMenu.day}` : `Poza pentru această zi va fi adăugată în curând. Momentan este afișat meniul de ${selectedMenu.day}.`)
-    : "Meniul zilei revine luni, în intervalul 11:00-16:00.";
+    : "Meniul zilei revine Luni, în intervalul 11:00-16:00.";
 }
 
 function setText(selector, value) {
@@ -382,7 +382,7 @@ function addToCart(item) {
 
 function addDailyMenuToCart(optionKey) {
   if (!activeDailyMenu) {
-    alert("Meniul zilei este disponibil doar de luni până vineri.");
+    alert("Meniul zilei este disponibil doar de Luni până Vineri.");
     return;
   }
   const option = DAILY_MENU_OPTIONS[optionKey];
