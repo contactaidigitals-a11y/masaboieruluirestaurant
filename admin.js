@@ -64,9 +64,7 @@ function normalizeReservationDateFilter() {
 
 function normalizeOptionalDateFilter(input) {
   if (!input || !input.value.trim()) return "";
-  const isoDate = optionalShortDateToIso(input.value);
-  if (isoDate) input.value = isoToShortDate(isoDate);
-  return isoDate;
+  return optionalShortDateToIso(input.value);
 }
 
 async function apiRequest(url, options = {}) {
