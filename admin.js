@@ -7,6 +7,8 @@ const reservationsList = document.querySelector("#reservationsList");
 const ordersList = document.querySelector("#ordersList");
 const clientsList = document.querySelector("#clientsList");
 const orderSearch = document.querySelector("#orderSearch");
+const orderDateFilter = document.querySelector("#orderDateFilter");
+const orderDateClear = document.querySelector("#orderDateClear");
 const clientSearch = document.querySelector("#clientSearch");
 const pendingReservationsOverview = document.querySelector("#pendingReservationsOverview");
 const adminMenuList = document.querySelector("#adminMenuList");
@@ -42,10 +44,28 @@ function shortDateToIso(value) {
   return localDateString();
 }
 
+function optionalShortDateToIso(value) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  const shortDate = text.match(/^(\d{2})\/(\d{2})\/(\d{2})$/);
+  if (shortDate) return `20${shortDate[3]}-${shortDate[2]}-${shortDate[1]}`;
+  const fullDate = text.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (fullDate) return `${fullDate[3]}-${fullDate[2]}-${fullDate[1]}`;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+  return "";
+}
+
 function normalizeReservationDateFilter() {
   if (!reservationDateFilter) return localDateString();
   const isoDate = shortDateToIso(reservationDateFilter.value || isoToShortDate(localDateString()));
   reservationDateFilter.value = isoToShortDate(isoDate);
+  return isoDate;
+}
+
+function normalizeOptionalDateFilter(input) {
+  if (!input || !input.value.trim()) return "";
+  const isoDate = optionalShortDateToIso(input.value);
+  if (isoDate) input.value = isoToShortDate(isoDate);
   return isoDate;
 }
 
@@ -485,10 +505,15 @@ async function deleteReservation(id) {
 function renderOrders(orders) {
   if (!ordersList) return;
   const query = String(orderSearch?.value || "").trim().toLowerCase();
-  const filteredOrders = orders.filter((order) => `${order.customerName} ${order.phone} ${order.address} ${order.city}`.toLowerCase().includes(query));
+  const selectedDate = normalizeOptionalDateFilter(orderDateFilter);
+  const filteredOrders = orders.filter((order) => {
+    const matchesQuery = `${order.customerName} ${order.phone} ${order.address} ${order.city}`.toLowerCase().includes(query);
+    const matchesDate = !selectedDate || orderDateIso(order) === selectedDate;
+    return matchesQuery && matchesDate;
+  });
 
   if (filteredOrders.length === 0) {
-    ordersList.innerHTML = `<div class="order-admin-card"><p>${query ? "Nu există comenzi pentru această căutare." : "Nu există comenzi încă."}</p></div>`;
+    ordersList.innerHTML = `<div class="order-admin-card"><p>${query || selectedDate ? "Nu există comenzi pentru filtrul ales." : "Nu există comenzi încă."}</p></div>`;
     return;
   }
 
@@ -517,6 +542,12 @@ function renderOrders(orders) {
   ordersList.querySelectorAll("[data-order-action]").forEach((button) => {
     button.addEventListener("click", () => updateOrder(button.closest(".order-admin-card").dataset.orderId, button.dataset.orderAction));
   });
+}
+
+function orderDateIso(order) {
+  const date = new Date(order.createdAt);
+  if (Number.isNaN(date.getTime())) return "";
+  return localDateString(date);
 }
 
 function renderOrderCard(order) {
@@ -626,6 +657,16 @@ logoutBtn.addEventListener("click", async () => {
 });
 clientSearch?.addEventListener("input", renderClients);
 orderSearch?.addEventListener("input", () => renderOrders(adminState.orders));
+orderDateFilter?.addEventListener("change", () => renderOrders(adminState.orders));
+orderDateFilter?.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter") return;
+  event.preventDefault();
+  renderOrders(adminState.orders);
+});
+orderDateClear?.addEventListener("click", () => {
+  if (orderDateFilter) orderDateFilter.value = "";
+  renderOrders(adminState.orders);
+});
 menuSearch?.addEventListener("input", renderMenuAvailability);
 reservationDateFilter?.addEventListener("change", () => {
   normalizeReservationDateFilter();

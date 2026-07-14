@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css?v=20260714-nav-about-contact" />
+  <link rel="stylesheet" href="../style.css?v=20260714-order-date-filter" />
 </head>
 <body class="admin-page">
   <header class="nav">
@@ -62,7 +62,11 @@
               <p class="eyebrow">Comenzi</p>
               <h2>Comenzi online</h2>
             </div>
-            <label class="client-search">Caută comandă<input id="orderSearch" type="search" placeholder="Nume, telefon sau adresă"></label>
+            <div class="admin-filter-group">
+              <label class="client-search">Caută comandă<input id="orderSearch" type="search" placeholder="Nume, telefon sau adresă"></label>
+              <label class="client-search">Data comenzilor<input id="orderDateFilter" type="text" inputmode="numeric" placeholder="dd/mm/yy" pattern="\d{2}/\d{2}/\d{2}"></label>
+              <button class="btn ghost filter-clear" type="button" id="orderDateClear">Toate</button>
+            </div>
           </div>
           <div class="orders-list" id="ordersList"></div>
         </div>
@@ -104,6 +108,6 @@
   </main>
 
   <script src="../menu-data.js"></script>
-  <script src="../admin.js"></script>
+  <script src="../admin.js?v=20260714-order-date-filter"></script>
 </body>
 </html>
