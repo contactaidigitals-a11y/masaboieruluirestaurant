@@ -124,6 +124,9 @@ const orderConfirmWhatsAppBtn = document.querySelector("#orderConfirmWhatsAppBtn
 const orderConfirmText = document.querySelector("#orderConfirmText");
 const reservationForm = document.querySelector("#reservationForm");
 const reservationMessage = document.querySelector("#reservationMessage");
+const dailyMenuImage = document.querySelector("#dailyMenuImage");
+const dailyMenuDay = document.querySelector("#dailyMenuDay");
+const dailyMenuCaption = document.querySelector("#dailyMenuCaption");
 const adminLogin = document.querySelector("#adminLogin");
 const adminPanel = document.querySelector("#adminPanel");
 const adminMessage = document.querySelector("#adminMessage");
@@ -134,6 +137,25 @@ let cart = [];
 let activeMenuCategory = "Toate";
 let unavailableMenuKeys = new Set();
 let pendingWhatsAppUrl = "";
+
+const DAILY_MENU_BY_DAY = {
+  1: { day: "Luni", src: "assets/meniu-zilei-luni.jpg" },
+  2: { day: "Marți", src: "assets/meniu-zilei-marti.jpg" },
+};
+
+function renderDailyMenu() {
+  if (!dailyMenuImage) return;
+  const today = new Date().getDay();
+  const menuForToday = DAILY_MENU_BY_DAY[today];
+  const selectedMenu = menuForToday || DAILY_MENU_BY_DAY[2] || DAILY_MENU_BY_DAY[1];
+
+  dailyMenuImage.src = selectedMenu.src;
+  dailyMenuImage.alt = `Meniul zilei - ${selectedMenu.day}`;
+  if (dailyMenuDay) dailyMenuDay.textContent = menuForToday ? `Astăzi, ${selectedMenu.day}` : "Ultimul meniu disponibil";
+  if (dailyMenuCaption) dailyMenuCaption.textContent = menuForToday
+    ? `Meniul zilei pentru ${selectedMenu.day}`
+    : `Pentru această zi urmează să adăugăm poza. Momentan este afișat meniul de ${selectedMenu.day}.`;
+}
 
 function setText(selector, value) {
   const element = document.querySelector(selector);
@@ -650,6 +672,7 @@ function updateActiveNav() {
   });
 }
 
+renderDailyMenu();
 renderMenuTabs();
 renderMenu();
 loadMenuAvailability();
