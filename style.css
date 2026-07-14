@@ -260,6 +260,7 @@ input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgb
 .client-delete { margin-top: 10px; padding: 8px 12px; width: 100%; }
 
 .contact { display: grid; grid-template-columns: 1fr 420px; gap: 32px; background: radial-gradient(circle at bottom right, rgba(216, 163, 72, .14), transparent 40%); }
+.contact-reservation-btn { margin: 8px 0 26px; }
 .contact-card .btn { width: 100%; margin-top: 12px; }
 footer { text-align: center; color: var(--muted); padding: 28px; border-top: 1px solid rgba(216, 163, 72, .18); }
 
