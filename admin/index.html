@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css?v=20260714-admin-filters" />
+  <link rel="stylesheet" href="../style.css?v=20260714-admin-polish" />
 </head>
 <body class="admin-page">
   <header class="nav">
@@ -53,6 +53,7 @@
             <button class="active" type="button" data-admin-tab="reservations">Rezervări <span id="reservationsTabCount">0</span></button>
             <button type="button" data-admin-tab="orders">Comenzi <span id="ordersTabCount">0</span></button>
             <button type="button" data-admin-tab="clients">Fișă clienți <span id="clientsTabCount">0</span></button>
+            <button type="button" data-admin-tab="menu">Meniu <span id="menuTabCount">0</span></button>
           </div>
         </div>
 
@@ -73,6 +74,7 @@
                   <option value="cancelled">Anulate</option>
                 </select>
               </label>
+              <button class="btn ghost filter-clear" type="button" id="reservationDateClear">Toate zilele</button>
             </div>
           </div>
           <div class="pending-reservations-overview" id="pendingReservationsOverview"></div>
@@ -114,7 +116,7 @@
           <div class="clients-list" id="clientsList"></div>
         </div>
 
-        <div class="admin-menu-panel">
+        <div class="admin-tab-panel" data-admin-tab-panel="menu">
           <div class="admin-section-title">
             <div>
               <p class="eyebrow">Disponibilitate</p>
@@ -130,6 +132,6 @@
   </main>
 
   <script src="../menu-data.js"></script>
-  <script src="../admin.js?v=20260714-admin-filters"></script>
+  <script src="../admin.js?v=20260714-admin-polish"></script>
 </body>
 </html>

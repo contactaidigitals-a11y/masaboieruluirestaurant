@@ -405,9 +405,11 @@ app.post("/api/admin/logout", asyncHandler(async (req, res) => {
 }));
 
 app.get("/api/admin/state", requireAdmin, asyncHandler(async (req, res) => {
-  const selectedDate = String(req.query.date || localDateString()).slice(0, 10);
+  const requestedDate = String(req.query.date || "").slice(0, 10);
+  const selectedDate = /^\d{4}-\d{2}-\d{2}$/.test(requestedDate) ? requestedDate : "";
   const allReservations = await getReservations();
-  const reservations = await getReservations(selectedDate);
+  const reservations = selectedDate ? await getReservations(selectedDate) : allReservations;
+  const seatReservations = selectedDate ? reservations : await getReservations(localDateString());
   const orders = await getOrders();
   const clients = await getClients();
   const menuAvailability = await getMenuAvailability();
@@ -423,8 +425,8 @@ app.get("/api/admin/state", requireAdmin, asyncHandler(async (req, res) => {
       orders: orders.filter((item) => item.status === "new"),
     },
     stats: {
-      restaurantSeats: availableSeats(reservations, "restaurant"),
-      terraceSeats: availableSeats(reservations, "terrace"),
+      restaurantSeats: availableSeats(seatReservations, "restaurant"),
+      terraceSeats: availableSeats(seatReservations, "terrace"),
       pendingReservations: reservations.filter((item) => item.status === "pending").length,
       pendingReservationsTotal: pendingReservations.length,
       newOrders: orders.filter((item) => item.status === "new").length,
@@ -623,8 +625,18 @@ app.patch("/api/orders/:id", requireAdmin, asyncHandler(async (req, res) => {
   }
 
   if (!pool) {
+    const existing = memory.orders.find((order) => order.id === req.params.id);
+    if (existing?.status === "delivered" && status !== "delivered") {
+      res.status(409).json({ error: "Comanda livrata nu mai poate fi modificata." });
+      return;
+    }
     memory.orders = memory.orders.map((order) => order.id === req.params.id ? { ...order, status, updatedAt: new Date().toISOString() } : order);
   } else {
+    const existing = (await query("SELECT status FROM orders WHERE id = $1", [req.params.id]))[0];
+    if (existing?.status === "delivered" && status !== "delivered") {
+      res.status(409).json({ error: "Comanda livrata nu mai poate fi modificata." });
+      return;
+    }
     await query("UPDATE orders SET status = $2, updated_at = NOW() WHERE id = $1", [req.params.id, status]);
   }
   res.json({ ok: true });

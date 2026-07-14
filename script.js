@@ -620,7 +620,7 @@ async function submitReservation(event) {
     await apiRequest("/api/reservations", { method: "POST", body: JSON.stringify(reservation) });
     reservationForm.reset();
     const dateInput = reservationForm.querySelector("[name='reservationDate']");
-    if (dateInput) dateInput.value = todayRoDate();
+    if (dateInput) dateInput.value = localDateString();
     showMessage(reservationMessage, "Rezervarea a fost trimisă. Te vom suna pentru confirmare.", "ok");
   } catch (error) {
     showMessage(reservationMessage, error.message, "error");
@@ -759,7 +759,7 @@ renderSeats();
 renderAdmin();
 updateActiveNav();
 if (reservationForm?.querySelector("[name='reservationDate']")) {
-  reservationForm.querySelector("[name='reservationDate']").value = todayRoDate();
+  reservationForm.querySelector("[name='reservationDate']").value = localDateString();
 }
 window.addEventListener("hashchange", updateActiveNav);
 if (menuGrid) window.setInterval(loadMenuAvailability, 30000);

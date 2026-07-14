@@ -163,6 +163,8 @@ textarea { width: 100%; border: 1px solid rgba(216, 163, 72, .28); background: r
 .reservation-form, .admin-login { display: grid; gap: 14px; }
 label { display: grid; gap: 8px; color: var(--muted); font-weight: 800; }
 input, select { width: 100%; border: 1px solid rgba(216, 163, 72, .28); background: rgba(0, 0, 0, .24); color: var(--cream); border-radius: 8px; padding: 13px 14px; outline: none; }
+select option { background: #101711; color: #fff4dc; }
+select option:checked { background: #d8a348; color: #120c05; }
 input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(216, 163, 72, .12); }
 .form-note { min-height: 24px; margin: 0; font-weight: 800; }
 .form-note.ok { color: var(--ok); }
@@ -193,7 +195,7 @@ input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgb
 .admin-tabs button { border: 1px solid rgba(216, 163, 72, .35); background: rgba(255, 244, 220, .04); color: var(--cream); padding: 11px 16px; border-radius: 999px; font-weight: 900; cursor: pointer; }
 .admin-tabs button.active { background: var(--gold); color: #100b06; }
 .admin-tabs span { display: inline-flex; min-width: 24px; justify-content: center; margin-left: 8px; padding: 2px 7px; border-radius: 999px; background: rgba(0, 0, 0, .22); }
-.admin-tabs-large { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.admin-tabs-large { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .admin-tabs-large button { min-height: 64px; border-radius: 8px; font-size: 1.05rem; }
 .admin-tab-panel { display: none; }
 .admin-tab-panel.active { display: block; }

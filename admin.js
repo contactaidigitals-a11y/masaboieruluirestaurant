@@ -11,6 +11,7 @@ const orderDateFilter = document.querySelector("#orderDateFilter");
 const orderDateClear = document.querySelector("#orderDateClear");
 const orderStatusFilter = document.querySelector("#orderStatusFilter");
 const reservationSearch = document.querySelector("#reservationSearch");
+const reservationDateClear = document.querySelector("#reservationDateClear");
 const reservationStatusFilter = document.querySelector("#reservationStatusFilter");
 const clientSearch = document.querySelector("#clientSearch");
 const pendingReservationsOverview = document.querySelector("#pendingReservationsOverview");
@@ -59,8 +60,8 @@ function optionalShortDateToIso(value) {
 }
 
 function normalizeReservationDateFilter() {
-  if (!reservationDateFilter) return localDateString();
-  const isoDate = shortDateToIso(reservationDateFilter.value || localDateString());
+  if (!reservationDateFilter || !reservationDateFilter.value.trim()) return "";
+  const isoDate = shortDateToIso(reservationDateFilter.value);
   reservationDateFilter.value = isoDate;
   return isoDate;
 }
@@ -146,17 +147,19 @@ function updateAdminBadges() {
   const ordersCount = document.querySelector("#ordersTabCount");
   const reservationsCount = document.querySelector("#reservationsTabCount");
   const clientsCount = document.querySelector("#clientsTabCount");
+  const menuCount = document.querySelector("#menuTabCount");
   const pendingTotal = adminState.stats.pendingReservationsTotal ?? adminState.notifications?.reservations?.length ?? adminState.stats.pendingReservations ?? 0;
   if (ordersCount) ordersCount.textContent = adminState.stats.newOrders || 0;
   if (reservationsCount) reservationsCount.textContent = pendingTotal;
   if (clientsCount) clientsCount.textContent = adminState.clients?.length || 0;
+  if (menuCount) menuCount.textContent = adminState.stats.unavailableItems || 0;
   const total = Number(adminState.stats.newOrders || 0) + Number(pendingTotal);
   document.title = total > 0 ? `(${total}) Admin | Masa Boierului` : "Admin | Masa Boierului";
 }
 
 async function loadAdminState() {
   const date = normalizeReservationDateFilter();
-  adminState = await apiRequest(`/api/admin/state?date=${encodeURIComponent(date)}`);
+  adminState = await apiRequest(`/api/admin/state${date ? `?date=${encodeURIComponent(date)}` : ""}`);
 }
 
 async function renderAdmin() {
@@ -172,7 +175,6 @@ async function renderAdmin() {
   logoutBtn.classList.remove("hidden");
 
   try {
-    if (reservationDateFilter && !reservationDateFilter.value) reservationDateFilter.value = localDateString();
     await loadAdminState();
     document.querySelector("#adminRestaurantSeats").textContent = adminState.stats.restaurantSeats;
     document.querySelector("#adminTerraceSeats").textContent = adminState.stats.terraceSeats;
@@ -393,7 +395,6 @@ function renderReservationCard(reservation) {
         <button class="btn" type="button" data-action="confirm" ${canConfirm ? "" : "disabled"}>Confirmă</button>
         <button class="btn edit" type="button" data-action="edit">Modifică</button>
         <button class="btn danger" type="button" data-action="cancel" ${canCancel ? "" : "disabled"}>Anulează</button>
-        <button class="btn ghost" type="button" data-action="delete">Șterge</button>
       </div>
     </article>
   `;
@@ -458,9 +459,6 @@ function bindReservationActions() {
     });
   });
 
-  reservationsList.querySelectorAll("[data-action='delete']").forEach((button) => {
-    button.addEventListener("click", () => deleteReservation(button.closest(".reservation-card").dataset.id));
-  });
 }
 
 async function updateReservation(id, patch) {
@@ -602,10 +600,9 @@ function renderOrderCard(order) {
         </div>
       </div>
       <div class="admin-actions">
-        <button class="btn" type="button" data-order-action="preparing" ${order.status === "preparing" ? "disabled" : ""}>În pregătire</button>
+        <button class="btn" type="button" data-order-action="preparing" ${order.status === "preparing" || order.status === "delivered" ? "disabled" : ""}>În pregătire</button>
         <button class="btn edit" type="button" data-order-action="delivered" ${order.status === "delivered" ? "disabled" : ""}>Livrată</button>
-        <button class="btn danger" type="button" data-order-action="cancelled" ${order.status === "cancelled" ? "disabled" : ""}>Anulează</button>
-        <button class="btn ghost" type="button" data-order-action="delete">Șterge</button>
+        <button class="btn danger" type="button" data-order-action="cancelled" ${order.status === "cancelled" || order.status === "delivered" ? "disabled" : ""}>Anulează</button>
       </div>
     </article>
   `;
@@ -705,6 +702,11 @@ orderDateClear?.addEventListener("click", () => {
 menuSearch?.addEventListener("input", renderMenuAvailability);
 reservationSearch?.addEventListener("input", () => renderReservations(adminState.reservations));
 reservationStatusFilter?.addEventListener("change", () => renderReservations(adminState.reservations));
+reservationDateClear?.addEventListener("click", () => {
+  if (reservationDateFilter) reservationDateFilter.value = "";
+  editingReservationId = null;
+  renderAdmin();
+});
 reservationDateFilter?.addEventListener("change", () => {
   normalizeReservationDateFilter();
   editingReservationId = null;
