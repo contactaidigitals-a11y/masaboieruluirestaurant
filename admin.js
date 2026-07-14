@@ -548,10 +548,16 @@ function orderDateIso(order) {
   return localDateString(date);
 }
 
+function orderMapQuery(order, cityLabel) {
+  return [order.address, cityLabel, "Romania"].filter(Boolean).join(", ");
+}
+
 function renderOrderCard(order) {
   const date = new Date(order.createdAt).toLocaleString("ro-RO");
   const cityLabel = order.city === "nearby" ? "Localitate limitrofă" : order.city === "outside" ? "În afara zonei standard" : "Craiova";
   const items = (order.items || []).map((item) => `<li>${item.quantity} x ${item.name} <span>${item.priceLabel}</span></li>`).join("");
+  const mapQuery = orderMapQuery(order, cityLabel);
+  const encodedMapQuery = encodeURIComponent(mapQuery);
   return `
     <article class="order-admin-card status-card-${order.status}" data-order-id="${order.id}">
       <div>
@@ -564,6 +570,10 @@ function renderOrderCard(order) {
         ${order.notes ? `<p>Observații: ${order.notes}</p>` : ""}
         <ul class="order-admin-items">${items}</ul>
         <p><strong>Total: ${money(order.total)}</strong> <span>(${money(order.subtotal)} + livrare ${money(order.deliveryFee)})</span></p>
+        <div class="order-map">
+          <iframe title="Locatie comanda" src="https://www.google.com/maps?q=${encodedMapQuery}&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <a href="https://www.google.com/maps/search/?api=1&query=${encodedMapQuery}" target="_blank" rel="noopener">Deschide locatia in Google Maps</a>
+        </div>
       </div>
       <div class="admin-actions">
         <button class="btn" type="button" data-order-action="preparing" ${order.status === "preparing" ? "disabled" : ""}>În pregătire</button>
