@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20260714-admin-polish" />
+  <link rel="stylesheet" href="style.css?v=20260718-weekend-menu-carousel" />
 </head>
 <body>
   <header class="nav">
@@ -108,7 +108,9 @@
         </div>
       </div>
       <figure class="daily-menu-media">
+        <button class="daily-menu-carousel-btn daily-menu-prev hidden" type="button" id="dailyMenuPrev" aria-label="Meniul zilei anterior">‹</button>
         <img id="dailyMenuImage" src="assets/meniu-zilei-marti.jpg" alt="Meniul zilei Masa Boierului">
+        <button class="daily-menu-carousel-btn daily-menu-next hidden" type="button" id="dailyMenuNext" aria-label="Meniul zilei următor">›</button>
         <figcaption id="dailyMenuCaption">Meniul zilei disponibil astăzi</figcaption>
       </figure>
     </section>
@@ -238,6 +240,6 @@
 
   <footer>© 2026 Masa Boierului • Ospăț ca pe vremuri!</footer>
   <script src="menu-data.js?v=20260714"></script>
-  <script src="script.js?v=20260718-cart-fix"></script>
+  <script src="script.js?v=20260718-weekend-menu-carousel"></script>
 </body>
 </html>

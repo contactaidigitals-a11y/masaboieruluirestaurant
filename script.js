@@ -129,6 +129,8 @@ const dailyMenuDay = document.querySelector("#dailyMenuDay");
 const dailyMenuCaption = document.querySelector("#dailyMenuCaption");
 const dailyMenuActions = document.querySelector("#dailyMenuActions");
 const dailyMenuClosed = document.querySelector("#dailyMenuClosed");
+const dailyMenuPrev = document.querySelector("#dailyMenuPrev");
+const dailyMenuNext = document.querySelector("#dailyMenuNext");
 const aboutCarouselImage = document.querySelector("#aboutCarouselImage");
 const aboutCarouselPrev = document.querySelector("#aboutCarouselPrev");
 const aboutCarouselNext = document.querySelector("#aboutCarouselNext");
@@ -147,6 +149,7 @@ const DAILY_MENU_BY_DAY = {
   1: { day: "Luni", src: "assets/meniu-zilei-luni.jpg" },
   2: { day: "Marți", src: "assets/meniu-zilei-marti.jpg" },
 };
+const DAILY_MENU_GALLERY = Object.values(DAILY_MENU_BY_DAY);
 
 const DAILY_MENU_OPTIONS = {
   first: { label: "Felul 1", price: "18 Lei" },
@@ -164,27 +167,42 @@ const ABOUT_GALLERY = [
 ];
 
 let activeDailyMenu = null;
+let dailyMenuGalleryIndex = 0;
 let aboutGalleryIndex = 0;
+
+function showDailyMenuPhoto(menu, caption) {
+  if (!dailyMenuImage) return;
+  dailyMenuImage.src = menu.src;
+  dailyMenuImage.alt = `Meniul zilei - ${menu.day}`;
+  dailyMenuImage.closest(".daily-menu-media")?.style.setProperty("--daily-menu-image", `url("${menu.src}")`);
+  if (dailyMenuCaption) dailyMenuCaption.textContent = caption;
+}
 
 function renderDailyMenu() {
   if (!dailyMenuImage) return;
   const today = new Date().getDay();
   const isWeekday = today >= 1 && today <= 5;
   const menuForToday = DAILY_MENU_BY_DAY[today];
-  const selectedMenu = menuForToday || DAILY_MENU_BY_DAY[2] || DAILY_MENU_BY_DAY[1];
+  const selectedMenu = menuForToday || DAILY_MENU_GALLERY[dailyMenuGalleryIndex] || DAILY_MENU_BY_DAY[2] || DAILY_MENU_BY_DAY[1];
   activeDailyMenu = isWeekday ? { ...selectedMenu, hasPhoto: Boolean(menuForToday) } : null;
 
-  dailyMenuImage.src = selectedMenu.src;
-  dailyMenuImage.alt = `Meniul zilei - ${selectedMenu.day}`;
-  dailyMenuImage.closest(".daily-menu-media")?.style.setProperty("--daily-menu-image", `url("${selectedMenu.src}")`);
+  const hasWeekendGallery = !isWeekday && DAILY_MENU_GALLERY.length > 1;
   dailyMenuActions?.classList.toggle("hidden", !isWeekday);
   dailyMenuClosed?.classList.toggle("hidden", isWeekday);
+  dailyMenuPrev?.classList.toggle("hidden", !hasWeekendGallery);
+  dailyMenuNext?.classList.toggle("hidden", !hasWeekendGallery);
   if (dailyMenuDay) dailyMenuDay.textContent = isWeekday
     ? (menuForToday ? `Astăzi, ${selectedMenu.day}` : "Meniul zilei")
     : "Weekend";
-  if (dailyMenuCaption) dailyMenuCaption.textContent = isWeekday
+  showDailyMenuPhoto(selectedMenu, isWeekday
     ? (menuForToday ? `Meniul zilei pentru ${selectedMenu.day}` : `Poza pentru această zi va fi adăugată în curând. Momentan este afișat meniul de ${selectedMenu.day}.`)
-    : "Meniul zilei revine Luni, în intervalul 11:00-16:00.";
+    : `Meniul zilei pentru ${selectedMenu.day}. Poți vedea meniurile disponibile pentru Luni - Vineri.`);
+}
+
+function changeWeekendDailyMenu(direction) {
+  if (DAILY_MENU_GALLERY.length < 2) return;
+  dailyMenuGalleryIndex = (dailyMenuGalleryIndex + direction + DAILY_MENU_GALLERY.length) % DAILY_MENU_GALLERY.length;
+  renderDailyMenu();
 }
 
 function setText(selector, value) {
@@ -791,6 +809,8 @@ checkoutForm?.addEventListener("submit", submitOrder);
 dailyMenuActions?.querySelectorAll("[data-daily-menu]").forEach((button) => {
   button.addEventListener("click", () => addDailyMenuToCart(button.dataset.dailyMenu));
 });
+dailyMenuPrev?.addEventListener("click", () => changeWeekendDailyMenu(-1));
+dailyMenuNext?.addEventListener("click", () => changeWeekendDailyMenu(1));
 aboutCarouselPrev?.addEventListener("click", () => moveAboutCarousel(-1));
 aboutCarouselNext?.addEventListener("click", () => moveAboutCarousel(1));
 reservationForm?.addEventListener("submit", submitReservation);
