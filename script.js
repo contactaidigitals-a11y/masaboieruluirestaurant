@@ -148,6 +148,7 @@ let pendingWhatsAppUrl = "";
 const DAILY_MENU_BY_DAY = {
   1: { day: "Luni", src: "assets/meniu-zilei-luni.jpg" },
   2: { day: "Marți", src: "assets/meniu-zilei-marti.jpg" },
+  4: { day: "Joi", src: "assets/meniu-zilei-joi.jpg" },
 };
 const DAILY_MENU_GALLERY = Object.values(DAILY_MENU_BY_DAY);
 
@@ -183,11 +184,12 @@ function renderDailyMenu() {
   const today = new Date().getDay();
   const isWeekday = today >= 1 && today <= 5;
   const menuForToday = DAILY_MENU_BY_DAY[today];
-  const selectedMenu = menuForToday || DAILY_MENU_GALLERY[dailyMenuGalleryIndex] || DAILY_MENU_BY_DAY[2] || DAILY_MENU_BY_DAY[1];
-  activeDailyMenu = isWeekday ? { ...selectedMenu, hasPhoto: Boolean(menuForToday) } : null;
+  const fallbackMenu = DAILY_MENU_BY_DAY[today - 1] || DAILY_MENU_GALLERY[dailyMenuGalleryIndex] || DAILY_MENU_BY_DAY[2] || DAILY_MENU_BY_DAY[1];
+  const selectedMenu = menuForToday || fallbackMenu;
+  activeDailyMenu = isWeekday && menuForToday ? { ...selectedMenu, hasPhoto: true } : null;
 
   const hasWeekendGallery = !isWeekday && DAILY_MENU_GALLERY.length > 1;
-  dailyMenuActions?.classList.toggle("hidden", !isWeekday);
+  dailyMenuActions?.classList.toggle("hidden", !(isWeekday && menuForToday));
   dailyMenuClosed?.classList.toggle("hidden", isWeekday);
   dailyMenuPrev?.classList.toggle("hidden", !hasWeekendGallery);
   dailyMenuNext?.classList.toggle("hidden", !hasWeekendGallery);

@@ -19,7 +19,7 @@ button, input, select { font: inherit; }
 
 .nav { position: fixed; z-index: 20; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 14px 5vw; background: rgba(7, 10, 8, .78); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(216, 163, 72, .22); }
 .brand { display: flex; gap: 10px; align-items: center; font-family: Cinzel, serif; font-weight: 800; }
-.brand img { width: 92px; height: 42px; border-radius: 12px; object-fit: cover; border: 1px solid rgba(216, 163, 72, .28); box-shadow: 0 8px 24px rgba(0, 0, 0, .24); }
+.brand img { width: 92px; height: 42px; border-radius: 12px; object-fit: contain; background: #00301c; border: 1px solid rgba(216, 163, 72, .28); box-shadow: 0 8px 24px rgba(0, 0, 0, .24); }
 .nav nav { display: flex; gap: 20px; color: var(--muted); font-weight: 700; }
 .nav nav a:hover, .nav nav a.active { color: var(--gold); }
 
